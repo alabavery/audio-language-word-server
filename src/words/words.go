@@ -2,13 +2,14 @@ package words
 
 import (
 	"audio-language/words/server/rediscli"
-	"audio-language/words/server/util"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/ninetypercentlanguage/misc/files"
 
 	"github.com/ninetypercentlanguage/word-utils/combined"
 )
@@ -50,7 +51,7 @@ func InitWords(wordsDir string, r *rediscli.WordRedisCli) *[]string {
 	for _, f := range wordPaths {
 		word := wordFromWordPath(f)
 		wordStrings = append(wordStrings, word)
-		content, _ := util.ReadFileThatMayNotExist(f)
+		content, _ := files.ReadFileThatMayNotExist(f)
 		r.Set(word, content)
 	}
 	fmt.Printf("\nAdded %v words to redis\n", len(wordPaths))
