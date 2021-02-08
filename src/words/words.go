@@ -9,22 +9,14 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/ninetypercentlanguage/word-utils/combined"
 )
-
-type lemma struct {
-	Word        string   `json:"word"`
-	Definitions []string `json:"definitions"`
-}
-
-type partOfSpeech struct {
-	PartOfSpeech string  `json:"part_of_speech"`
-	Lemmas       []lemma `json:"lemmas"`
-}
 
 // Word is the contents of a single word's file
 type Word struct {
-	Word          string         `json:"word"`
-	PartsOfSpeech []partOfSpeech `json:"parts_of_speech"`
+	Word          string           `json:"word"`
+	PartsOfSpeech combined.Content `json:"parts_of_speech"`
 }
 
 // SearchWords searches the words directory for words that start with the searched string
@@ -37,7 +29,7 @@ func SearchWords(searched string, wordList *[]string, cli *rediscli.WordRedisCli
 		if !found {
 			panic(fmt.Sprintf("word %v present in word list but not in redis", match))
 		}
-		var pos []partOfSpeech
+		var pos []combined.ContentItem
 		err := json.Unmarshal(bytes, &pos)
 		if err != nil {
 			panic(err)
