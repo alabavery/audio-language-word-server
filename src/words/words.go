@@ -41,9 +41,9 @@ func SearchWords(searched string, wordList *[]string, cli *rediscli.WordRedisCli
 }
 
 /*
-InitWords goes through the words directory and saves every word json to redis under the word
-It returns a sorted list of the words that will be held in memory through the server's life
-Used on server startup
+InitWords goes through the words directory and saves every word json to redis under the word.
+It returns a sorted list of the words that will be held in memory through the server's life.
+Used on server startup.
 */
 func InitWords(wordsDir string, r *rediscli.WordRedisCli) *[]string {
 	wordPaths := getWordFiles(wordsDir)

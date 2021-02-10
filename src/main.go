@@ -12,10 +12,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
-/*
-"/word" /{id} ?
-"/user" /{id}
-*/
 func main() {
 	flagVals := getflags.GetFlags()
 	cli := rediscli.GetWordRedisCli()
