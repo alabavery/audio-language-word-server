@@ -1,6 +1,7 @@
 package main
 
 import (
+	"audio-language/words/server/dbwrapper"
 	"audio-language/words/server/getflags"
 	"audio-language/words/server/rediscli"
 	"audio-language/words/server/routes/word"
@@ -15,6 +16,8 @@ import (
 func main() {
 	flagVals := getflags.GetFlags()
 	cli := rediscli.GetWordRedisCli()
+	db := dbwrapper.Open()
+
 	wordList := words.InitWords(flagVals.Words, cli)
 
 	r := chi.NewRouter()
