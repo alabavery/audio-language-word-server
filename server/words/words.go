@@ -8,19 +8,20 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
 type Lemma struct {
-	ID          int
-	Word        string
-	Definitions string
+	ID          int    `json:"id"`
+	Word        string `json:"word"`
+	Definitions string `json:"definitions"`
 }
 
 type PartOfSpeech struct {
-	ID           int
-	PartOfSpeech string
-	Lemmas       []Lemma
+	ID           int     `json:"id"`
+	PartOfSpeech string  `json:"part_of_speech"`
+	Lemmas       []Lemma `json:"lemmas"`
 }
 
 type Word struct {
@@ -77,12 +78,12 @@ func InitWords(db *dbwrapper.DBWrapper, r *rediscli.WordRedisCli) []WordString {
 		})
 		denormalizedMap[wordID].PartsOfSpeech[partOfSpeechID] = pos
 	}
-	wordStrings := make([]WordString, 0)
+	wordStringsUnique := make(map[int]WordString, 0)
 	// redis should hold { [wordID]: json(Word) }
 	for _, entry := range denormalizedMap {
 		wordID := entry.ID
 		word := entry.Word
-		wordStrings = append(wordStrings, WordString{ID: wordID, Word: word})
+		wordStringsUnique[wordID] = WordString{ID: wordID, Word: word}
 
 		cacheData := Word{ID: wordID, Word: word, PartsOfSpeech: make([]PartOfSpeech, 0)}
 
@@ -95,25 +96,20 @@ func InitWords(db *dbwrapper.DBWrapper, r *rediscli.WordRedisCli) []WordString {
 		}
 		r.Set(rediscli.WordKeyFromId(wordID), j)
 	}
-
-	// don't forget to unique wordStrings before sorting
-
-	// wordPaths := getWordFiles(wordsDir)
-	// var wordStrings []string
-	// for _, f := range wordPaths {
-	// 	word := wordFromWordPath(f)
-	// 	wordStrings = append(wordStrings, word)
-	// 	content, _ := files.ReadFileThatMayNotExist(f)
-	// 	r.Set(word, content)
-	// }
-	// fmt.Printf("\nAdded %v words to redis\n", len(wordPaths))
-
+	wordStrings := make([]WordString, 0)
+	for _, wordString := range wordStringsUnique {
+		wordStrings = append(wordStrings, wordString)
+	}
+	sort.Slice(wordStrings, func(i, j int) bool {
+		return wordStrings[i].Word < wordStrings[j].Word
+	})
 	return wordStrings
 }
 
 // SearchWords searches the words directory for words that start with the searched string
 func SearchWords(searched string, wordList *[]WordString, cli *rediscli.WordRedisCli) *[]Word {
 	matches := getMatches(searched, wordList)
+	fmt.Println(matches)
 
 	var w []Word
 	for _, match := range matches {
