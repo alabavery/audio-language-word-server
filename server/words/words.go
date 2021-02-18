@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -125,29 +123,6 @@ func SearchWords(searched string, wordList *[]WordString, cli *rediscli.WordRedi
 		w = append(w, word)
 	}
 	return &w
-}
-
-func wordFromWordPath(path string) string {
-	d := strings.Split(path, "/")
-	fileName := d[len(d)-1]
-	return strings.Split(fileName, ".")[0]
-}
-
-func getWordFiles(wordsDir string) []string {
-	var files []string
-	err := filepath.Walk(wordsDir, func(path string, info os.FileInfo, e error) error {
-		if e != nil {
-			return e
-		}
-		if !info.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-	return files
 }
 
 func getMatches(searched string, wordList *[]WordString) []WordString {
