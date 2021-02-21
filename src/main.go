@@ -23,7 +23,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Route("/words", word.GetWordSubRoute(wordList, cli))
+	r.Route("/", word.GetWordSubRoute(wordList, cli))
 
 	log.Println("serving from 5000")
 	log.Fatal(http.ListenAndServe(":5000", r))
