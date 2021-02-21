@@ -1,4 +1,4 @@
-module audio-language/words/server
+module github.com/ninetypercentlanguage/word-server
 
 go 1.15
 
