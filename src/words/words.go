@@ -8,25 +8,9 @@ import (
 	"log"
 	"sort"
 	"strings"
+
+	"github.com/ninetypercentlanguage/entities/word"
 )
-
-type Lemma struct {
-	ID          int    `json:"id"`
-	Word        string `json:"word"`
-	Definitions string `json:"definitions"`
-}
-
-type PartOfSpeech struct {
-	ID           int     `json:"id"`
-	PartOfSpeech string  `json:"part_of_speech"`
-	Lemmas       []Lemma `json:"lemmas"`
-}
-
-type Word struct {
-	ID            int            `json:"id"`
-	Word          string         `json:"word"`
-	PartsOfSpeech []PartOfSpeech `json:"parts_of_speech"`
-}
 
 type WordString struct {
 	ID   int
@@ -36,7 +20,7 @@ type WordString struct {
 type tempDenormalized struct {
 	ID            int
 	Word          string
-	PartsOfSpeech map[int]PartOfSpeech
+	PartsOfSpeech map[int]word.PartOfSpeech
 }
 
 /*
@@ -57,19 +41,19 @@ func InitWords(db *dbwrapper.DBWrapper, r *rediscli.WordRedisCli) []WordString {
 			t = tempDenormalized{
 				ID:            r.WordID,
 				Word:          r.WordString,
-				PartsOfSpeech: make(map[int]PartOfSpeech),
+				PartsOfSpeech: make(map[int]word.PartOfSpeech),
 			}
 			denormalizedMap[wordID] = t
 		}
 		partOfSpeechID := r.PartOfSpeechID
 		pos, ok := denormalizedMap[wordID].PartsOfSpeech[partOfSpeechID]
 		if !ok {
-			pos = PartOfSpeech{
+			pos = word.PartOfSpeech{
 				ID:           partOfSpeechID,
 				PartOfSpeech: r.PartOfSpeech,
 			}
 		}
-		pos.Lemmas = append(pos.Lemmas, Lemma{
+		pos.Lemmas = append(pos.Lemmas, word.Lemma{
 			ID:          r.LemmaID,
 			Word:        r.LemmaString,
 			Definitions: r.Definitions,
@@ -80,10 +64,10 @@ func InitWords(db *dbwrapper.DBWrapper, r *rediscli.WordRedisCli) []WordString {
 	// redis should hold { [wordID]: json(Word) }
 	for _, entry := range denormalizedMap {
 		wordID := entry.ID
-		word := entry.Word
-		wordStringsUnique[wordID] = WordString{ID: wordID, Word: word}
+		w := entry.Word
+		wordStringsUnique[wordID] = WordString{ID: wordID, Word: w}
 
-		cacheData := Word{ID: wordID, Word: word, PartsOfSpeech: make([]PartOfSpeech, 0)}
+		cacheData := word.Word{ID: wordID, Word: w, PartsOfSpeech: make([]word.PartOfSpeech, 0)}
 
 		for _, pos := range entry.PartsOfSpeech {
 			cacheData.PartsOfSpeech = append(cacheData.PartsOfSpeech, pos)
@@ -105,24 +89,24 @@ func InitWords(db *dbwrapper.DBWrapper, r *rediscli.WordRedisCli) []WordString {
 }
 
 // SearchWords searches the words directory for words that start with the searched string
-func SearchWords(searched string, wordList *[]WordString, cli *rediscli.WordRedisCli) *[]Word {
+func SearchWords(searched string, wordList *[]WordString, cli *rediscli.WordRedisCli) *[]word.Word {
 	matches := getMatches(searched, wordList)
 	fmt.Println(matches)
 
-	var w []Word
+	var words []word.Word
 	for _, match := range matches {
 		bytes, found := cli.Get(rediscli.WordKeyFromId(match.ID))
 		if !found {
 			log.Fatal(fmt.Sprintf("word %v present in word list but not in redis", match))
 		}
-		var word Word
-		err := json.Unmarshal(bytes, &word)
+		var w word.Word
+		err := json.Unmarshal(bytes, &w)
 		if err != nil {
 			log.Fatal("could not get word from redis json")
 		}
-		w = append(w, word)
+		words = append(words, w)
 	}
-	return &w
+	return &words
 }
 
 func getMatches(searched string, wordList *[]WordString) []WordString {

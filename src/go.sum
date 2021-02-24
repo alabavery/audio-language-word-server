@@ -21,11 +21,8 @@ github.com/google/go-cmp v0.5.4/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/lib/pq v1.9.0 h1:L8nSXQQzAYByakOFMTwpjRoHsMJklur4Gi59b6VivR8=
 github.com/lib/pq v1.9.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
-github.com/ninetypercentlanguage/misc v0.1.0 h1:q21B4qarozb6Ug93D/T2tsct3k7Mof33sIsdgZlc+S4=
-github.com/ninetypercentlanguage/misc v0.1.0/go.mod h1:5OI31u+XP9dl+O7XtDPvlTn8wnKeyN4888HX0jhiwfo=
-github.com/ninetypercentlanguage/misc v0.2.0 h1:F6i5kqtoC+o6v65zerUsvKxn5IBGGoEAKod7VnjUxuU=
-github.com/ninetypercentlanguage/word-utils v0.4.0 h1:asF5h5bSHGleBUfS/CEBwyd76HyZYMS7qH7hS2EFARc=
-github.com/ninetypercentlanguage/word-utils v0.4.0/go.mod h1:wKXBDU+7XCf9UHSTqoGmBU3I67g11RF4lgiz50d7UsA=
+github.com/ninetypercentlanguage/entities v0.1.2 h1:QIIf2yy+0VSib3MRhDf5RubFUU6gt/hAJVi1x0vBwd8=
+github.com/ninetypercentlanguage/entities v0.1.2/go.mod h1:d2aIoGnwW3j9LcwIfg3mtsZbnDz80t2mf38ntF9GcBM=
 github.com/nxadm/tail v1.4.4 h1:DQuhQpB1tVlglWS2hLQ5OV6B5r8aGxSrPc5Qo6uTN78=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
